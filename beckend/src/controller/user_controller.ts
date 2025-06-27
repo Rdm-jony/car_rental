@@ -18,7 +18,7 @@ export const createUser = async (req: Request, res: Response): Promise<any> => {
         return res.status(201).json({
             success: true,
             message: "user create successfully",
-            data:user,
+            data: user,
         })
     } catch (error: any) {
         if (error.code === 11000) {
@@ -52,8 +52,7 @@ export const createUser = async (req: Request, res: Response): Promise<any> => {
         // ⚫ Generic Server Error
         return res.status(500).json({
             success: false,
-            message: "Server Error",
-            error: error.message || "Something went wrong"
+            message: error.message || "Something went wrong"
         });
     }
 }
@@ -73,11 +72,34 @@ export const logInUser = async (req: Request, res: Response): Promise<any> => {
             return res.status(404).json({ success: false, message: "Invaild email or password" })
         }
 
-        res.status(200).json({ success: true, message: "successfully logged in",data:findUser })
-    } catch (error) {
+        const token = generateToken({ id: findUser._id, email: findUser.email, role: findUser.role })
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 60 * 60 * 1000,
+        })
+        res.status(200).json({ success: true, message: "successfully logged in", data: findUser })
+    } catch (error: any) {
         res.status(500).json({
             success: false,
-            error: "Something went wrong"
+            message: error.message || "Something went wrong"
+        });
+    }
+}
+
+export const getUser = async (req: Request, res: Response):Promise<any> => {
+    try {
+        const user = await User.findById(req.user?.id).select("-password")
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        res.status(200).json({success:true,user})
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message || "Something went wrong"
         });
     }
 }

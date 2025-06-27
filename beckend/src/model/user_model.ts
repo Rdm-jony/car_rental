@@ -26,6 +26,8 @@ const userSchema=new mongoose.Schema<IUser,Model<IUser>,UserInstance>({
         type:String,
         default:"",
     }
+},{
+    timestamps:true
 })
 
 userSchema.method("hashPassword",async function(){
