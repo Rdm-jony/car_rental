@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-export interface Icar {
+export interface ICar {
     owner: Types.ObjectId,
     brand: string,
     model: string,

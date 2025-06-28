@@ -1,7 +1,7 @@
 import mongoose, { model, Schema } from "mongoose";
-import { Icar } from "../interface/car_interface";
+import { ICar } from "../interface/car_interface";
 
-const carSchema = new mongoose.Schema<Icar>({
+const carSchema = new mongoose.Schema<ICar>({
     owner: {
         type: Schema.Types.ObjectId, ref: "User", required: true
     },
