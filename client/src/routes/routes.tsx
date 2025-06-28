@@ -1,5 +1,7 @@
 
 import Main from "@/Layout/Main";
+import CarDetails from "@/pages/CarDetails";
+import Cars from "@/pages/Cars";
 import Home from "@/pages/Home";
 import { createBrowserRouter } from "react-router";
 
@@ -10,7 +12,16 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                Component: Home
+                Component: Home,
+
+            },
+            {
+                path:"/cars",
+                Component:Cars
+            },
+            {
+                path:"/car-details",
+                Component:CarDetails
             }
         ]
     }
