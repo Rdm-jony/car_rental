@@ -5,9 +5,9 @@ import { Search } from "lucide-react";
 import { Button } from "../ui/button";
 import Modal from "../Modal/Modal";
 import SignUp from "../SignIUp/SignUp";
-import { useState } from "react";
+import React, { useState } from "react";
 
-const Navbar = () => {
+const Navbar = ({children}:{children:React.ReactNode}) => {
     const location = useLocation().pathname
     const [isSignUpOpen, setIsSignUpOpen] = useState(false);
 
@@ -17,6 +17,7 @@ const Navbar = () => {
                 <div className="mr-40">
                     <img src={logo} alt="" className="h-8" />
                 </div>
+                {children}
                 <div className="space-x-10">
                     <Link to="/">Home</Link>
                     <Link to="/cars">Cars</Link>
