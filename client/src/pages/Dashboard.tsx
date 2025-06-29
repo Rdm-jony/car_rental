@@ -7,7 +7,7 @@ const Dashboard = () => {
         <div>
             <DashboardHeading title="Admin Dashboard" description="Monitor overall platform performance including total cars, bookings, revenue, and recent activities" />
 
-            <div className="flex gap-10 mt-10">
+            <div className="flex gap-10">
                 <TotalCountCard />
                 <TotalCountCard />
                 <TotalCountCard />
