@@ -3,6 +3,7 @@ import Main from "@/Layout/Main";
 import CarDetails from "@/pages/CarDetails";
 import Cars from "@/pages/Cars";
 import Home from "@/pages/Home";
+import MyBooking from "@/pages/MyBooking";
 import { createBrowserRouter } from "react-router";
 
 export const router = createBrowserRouter([
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
             {
                 path:"/car-details",
                 Component:CarDetails
+            },
+            {
+                path:"/my-booking",
+                Component:MyBooking
             }
         ]
     }
