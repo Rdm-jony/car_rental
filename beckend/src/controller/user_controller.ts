@@ -21,6 +21,7 @@ export const createUser = async (req: Request, res: Response): Promise<any> => {
             data: user,
         })
     } catch (error: any) {
+
         if (error.code === 11000) {
             const field = Object.keys(error.keyValue)[0];
             return res.status(400).json({
@@ -95,7 +96,7 @@ export const getUser = async (req: Request, res: Response):Promise<any> => {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        res.status(200).json({success:true,user})
+        res.status(200).json(user)
     } catch (error: any) {
         res.status(500).json({
             success: false,

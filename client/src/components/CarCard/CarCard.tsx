@@ -4,7 +4,6 @@ import { Button } from "../ui/button";
 import { Car, Fuel, LocationEdit, User } from "lucide-react";
 
 const CarCard = ({ car }: { car: ICar }) => {
-    console.log(car)
     return (
 
         <Card className="pt-0">

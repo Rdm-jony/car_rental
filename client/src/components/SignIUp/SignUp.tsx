@@ -4,29 +4,38 @@ import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { signUpSchema } from "@/Model/SignUp_model";
-import type { z } from "zod";
+import { signUpSchema, type IUser } from "@/Model/SignUp_model";
 import Modal from "../Modal/Modal";
 import SignIn from "../SignIn/SignIn";
 import { useState } from "react";
+import { useSignUpMutation, type IErrorResponse } from "@/Redux/baseAPi";
+import { toast } from "sonner";
 
-type SignInFormData = z.infer<typeof signUpSchema>
 
 const SignUp = () => {
+    const [signUp] = useSignUpMutation()
     const [isSignInOpen, setIsSignInOpen] = useState(false);
 
-    const form = useForm<SignInFormData>({
+    const form = useForm<Pick<IUser,'email'|'name'|'password'>>({
         resolver: zodResolver(signUpSchema),
     })
-    const onSubmit = (data: SignInFormData) => {
-        console.log(data)
-    }
+
+    const onSubmit = async (value: Pick<IUser,'email'|'name'|'password'>) => {
+        try {
+            const response = await signUp(value).unwrap();
+            toast.success(response.message)
+        } catch (error: unknown) {
+            const err = error as IErrorResponse;
+            toast.error(err.data?.message || 'Something went wrong');
+        }
+    };
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
                     control={form.control}
-                    name="username"
+                    name="name"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Username</FormLabel>
