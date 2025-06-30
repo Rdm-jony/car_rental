@@ -1,7 +1,7 @@
 
-import { z } from "zod";
+import {  z } from "zod";
 
-export type ICar=z.infer<typeof carZodSchema>
+export type ICar=z.infer<typeof carZodSchema> & {_id?:string}
 
 
 // Define allowed fuel types, brands, etc.

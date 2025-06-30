@@ -19,9 +19,8 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useAppSelector } from "@/hooks/use-store";
 import { selectUser } from "@/Redux/feature/User/userSlice";
-import { useAddCarMutation } from "@/Redux/baseAPi";
+import { useAddCarMutation, type IErrorResponse } from "@/Redux/baseAPi";
 import { toast } from "sonner";
-import { object } from "zod";
 
 
 
@@ -32,7 +31,18 @@ const AddCar = () => {
 
     const form = useForm<ICar>({
         resolver: zodResolver(carZodSchema),
-
+        defaultValues: {
+            brand: "",
+            category: "",
+            description: "",
+            fuelTypes: undefined,
+            model: "",
+            year: 0,
+            location: "",
+            pricePerDay: 0,
+            seatingCapacity: 0,
+            transmission: undefined
+        }
     })
 
     async function onSubmit(data: ICar) {
@@ -45,19 +55,22 @@ const AddCar = () => {
             const value = data[key as keyof typeof data];
             if (value instanceof File) {
                 formData.append(key, value);
-            } else if (typeof value == 'object' && value != null) {
-                formData.append(key, JSON.stringify(value))
-            }
-            else {
+            } else {
                 formData.append(key, String(value));
             }
         }
+
         formData.append("owner", user?._id);
-        // try {
-        const response = await addCar(formData).unwrap();
-        // } catch (error) {
-        //     console.log(error)
-        // }
+        try {
+            const response = await addCar(formData).unwrap();
+            form.reset();
+            setImage(null);
+            toast.success(response.message)
+
+        } catch (error: unknown) {
+            const err = error as IErrorResponse;
+            toast.error(err.data?.message || 'Something went wrong');
+        }
     }
 
     return (
@@ -215,7 +228,14 @@ const AddCar = () => {
                             <FormItem>
                                 <FormLabel>Transmission</FormLabel>
                                 <FormControl>
-                                    <Input className="placeholder:text-xs" placeholder="Automatic" {...field} />
+                                    <select
+                                        {...field}
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm "
+                                    >
+                                        <option value="">Select Transmission Type</option>
+                                        <option value="Automatic">Automatic </option>
+                                        <option value="Manual">Manual</option>
+                                    </select>
                                 </FormControl>
 
                                 <FormMessage />

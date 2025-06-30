@@ -24,7 +24,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "cars", element: <Cars /> },
-      { path: "car-details", element: <CarDetails /> },
+      { path: "cars/:carId", element: <CarDetails /> },
       { path: "my-booking", element: <MyBooking /> },
       { path: "signIn", element:<AuhenticateRoute> <SignIn /> </AuhenticateRoute>  },
       { path: "signUp", element:<AuhenticateRoute><SignUp /></AuhenticateRoute>  },

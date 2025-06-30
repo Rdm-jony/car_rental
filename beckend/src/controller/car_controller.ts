@@ -4,8 +4,7 @@ import { Car } from "../model/car_model";
 
 export const addCar = async (req: Request, res: Response): Promise<any> => {
     try {
-        console.log("..............")
-        const body = JSON.parse(req.body)
+        const body = req.body
         if (!req.file) {
             return res.status(400).json({
                 success: false,
@@ -68,6 +67,20 @@ export const getAllCars = async (req: Request, res: Response): Promise<any> => {
         const data = await Car.find()
         res.status(200).json(data)
     } catch (error: any) {
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: error.message || "Something went wrong"
+        });
+    }
+}
+
+export const getSingleCar = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const carId=req.params.carId
+        const data=await Car.findById(carId)
+        res.json(data)
+    } catch (error:any) {
         console.log(error)
         res.status(500).json({
             success: false,
