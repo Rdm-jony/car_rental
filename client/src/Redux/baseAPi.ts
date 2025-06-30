@@ -1,5 +1,5 @@
 // Need to use the React-specific entry point to import createApi
-import type { ICar } from '@/Model/car_model'
+import type { IBooking, ICar } from '@/Model/car_model'
 import type { IUser } from '@/Model/SignUp_model'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 export interface IResponse {
@@ -57,10 +57,17 @@ export const baseApi = createApi({
         }),
         getCarDetails:build.query<ICar,string | undefined>({
             query:(carId)=>`car/${carId}`
+        }),
+        carBooking:build.mutation<IResponse,IBooking>({
+            query:(formData)=>({
+                url:'/booking',
+                method:"POST",
+                body:formData
+            })
         })
     }),
 })
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useSignUpMutation,useGetCurrentUserQuery,useSignInMutation,useGetAllCarsQuery,useAddCarMutation,useGetCarDetailsQuery} = baseApi
+export const { useSignUpMutation,useGetCurrentUserQuery,useSignInMutation,useGetAllCarsQuery,useAddCarMutation,useGetCarDetailsQuery,useCarBookingMutation} = baseApi

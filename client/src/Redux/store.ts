@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { baseApi } from './baseAPi'
 import userReducer from "@/Redux/feature/User/userSlice"
+import bookingReducer from "@/Redux/feature/Booking/bookingSlice"
 
 
 export const store = configureStore({
   reducer: {
     user:userReducer,
+    booking:bookingReducer,
     [baseApi.reducerPath]:baseApi.reducer
   },
    middleware: (getDefaultMiddleware) =>

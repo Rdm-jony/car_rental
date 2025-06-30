@@ -1,4 +1,4 @@
-import BookingCard from "@/components/BookingCard/BookingCard";
+import { BookingCard } from "@/components/BookingCard/BookingCard";
 import CarInfo from "@/components/CarInfo/CarInfo";
 import Loader from "@/components/Loader/Loader";
 import { useGetCarDetailsQuery } from "@/Redux/baseAPi";
@@ -22,7 +22,7 @@ const CarDetails = () => {
                     <CarInfo car={data!} />
                 </div>
                 <div className="w-1/3 sticky top-10 max-h-screen overflow-y-auto">
-                    <BookingCard />
+                    <BookingCard car={data!} />
                 </div>
             </div>
         </div>

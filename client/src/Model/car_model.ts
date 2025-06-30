@@ -61,3 +61,14 @@ export const carZodSchema = z.object({
   }),
 });
 
+export const BookingSchema = z.object({
+    pickUpDate: z.date({
+        required_error: "Pick up date is required.",
+    }),
+    returnDate: z.date({
+        required_error: "Return date is required.",
+    }),
+})
+
+export type IBooking=z.infer<typeof BookingSchema> & {user:string,car:string,totalPrice:number}
+

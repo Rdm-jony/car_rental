@@ -1,71 +1,172 @@
-import * as React from "react"
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
- 
+import { CalendarIcon } from "lucide-react"
+import { useForm } from "react-hook-form"
+
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
 } from "@/components/ui/popover"
 import { Card } from "../ui/card"
-import { Label } from "../ui/label"
+import { BookingSchema, type IBooking, type ICar } from "@/Model/car_model"
+import { useEffect } from "react"
+import { resetPrice, selectTotalPrice, setPickUpDate, setPricePerDay, setReturnDate } from "@/Redux/feature/Booking/bookingSlice"
+import { useAppDispatch, useAppSelector } from "@/hooks/use-store"
+import { useCarBookingMutation, type IErrorResponse } from "@/Redux/baseAPi"
+import { selectUser } from "@/Redux/feature/User/userSlice"
+import { toast } from "sonner"
 
-const BookingCard = () => {
-    const [pickUpDate, setPickUpDate] = React.useState<Date>()
-    const [returnDate, setRetunDate] = React.useState<Date>()
+
+
+export function BookingCard({ car }: { car: ICar }) {
+    const [carBooking] = useCarBookingMutation()
+    const dispatch = useAppDispatch()
+    const user = useAppSelector(selectUser)
+    const totalPrice = useAppSelector(selectTotalPrice)
+    const form = useForm<Pick<IBooking, 'pickUpDate' | 'returnDate'>>({
+        resolver: zodResolver(BookingSchema),
+        defaultValues:{
+            pickUpDate:undefined,
+            returnDate:undefined
+        }
+    })
+    const pickUpDate = form.watch("pickUpDate");
+    const returnDate = form.watch("returnDate");
+
+    useEffect(() => {
+        if (pickUpDate && returnDate) {
+            dispatch(setPickUpDate(pickUpDate))
+            dispatch(setReturnDate(returnDate))
+            dispatch(setPricePerDay(car.pricePerDay))
+        }
+    }, [dispatch, pickUpDate, returnDate, car.pricePerDay])
+
+
+    async function onSubmit(data: Pick<IBooking, 'pickUpDate' | 'returnDate'>) {
+        try {
+            const bookingData: IBooking = {
+                ...data,
+                user: user?._id ?? "",
+                car: car?._id ?? "",
+                totalPrice,
+            };
+            const response = await carBooking(bookingData).unwrap()
+            form.reset()
+            dispatch(resetPrice())
+            toast.success(response.message)
+        } catch (error: unknown) {
+            const err = error as IErrorResponse;
+            toast.error(err.data?.message || 'Something went wrong');
+        }
+    }
+
     return (
         <Card className="p-5">
-            <div className="flex justify-between items-center border-b pb-5">
-                <p className="text-2xl font-semibold">$130</p>
-                <p className="text-muted-foreground ">Per day</p>
-            </div>
-
-            <div className="text-muted-foreground font-semibold">
-                <Label htmlFor="pickUpDate" className="px-1">
-                    Pickup date
-                </Label>
-                <Popover >
-                    <PopoverTrigger asChild className="mt-2">
-                        <Button
-                            variant="outline"
-                            data-empty={!pickUpDate}
-                            className="data-[empty=true]:text-muted-foreground w-[280px] justify-start text-left font-normal"
-                        >
-                            <CalendarIcon />
-                            {pickUpDate ? format(pickUpDate, "PPP") : <span>pick a date</span>}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={pickUpDate} onSelect={setPickUpDate} />
-                    </PopoverContent>
-                </Popover>
-            </div>
-            <div className="text-muted-foreground font-semibold">
-                <Label htmlFor="returnDate" className="px-1">
-                    Return date
-                </Label>
-                <Popover >
-                    <PopoverTrigger asChild className="mt-2">
-                        <Button
-                            variant="outline"
-                            data-empty={!returnDate}
-                            className="data-[empty=true]:text-muted-foreground w-[280px] justify-start text-left font-normal"
-                        >
-                            <CalendarIcon />
-                            {returnDate ? format(returnDate, "PPP") : <span>pick a date</span>}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={returnDate} onSelect={setRetunDate} />
-                    </PopoverContent>
-                </Popover>
-            </div>
-            <Button className="w-full bg-primary">Book now</Button>
-            <p className="text-xs text-center">No credit card required to reserve</p>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <div className="flex justify-between pb-5 border-b-2">
+                        <p className="text-3xl font-semibold">${totalPrice}</p>
+                        <p className="text-muted-foreground ">Per day/ <span className="font-semibold">${car.pricePerDay}</span></p>
+                    </div>
+                    <FormField
+                        control={form.control}
+                        name="pickUpDate"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                                <FormLabel>Pick Pickup date</FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    " pl-3 text-left font-normal",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                            >
+                                                {field.value ? (
+                                                    format(field.value, "PPP")
+                                                ) : (
+                                                    <span>Pick a date</span>
+                                                )}
+                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={field.onChange}
+                                            disabled={(date) =>
+                                                date < new Date() || date >= new Date(returnDate)
+                                            }
+                                            captionLayout="dropdown"
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="returnDate"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                                <FormLabel>Pick return date</FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    " pl-3 text-left font-normal",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                            >
+                                                {field.value ? (
+                                                    format(field.value, "PPP")
+                                                ) : (
+                                                    <span>Pick a date</span>
+                                                )}
+                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={field.onChange}
+                                            disabled={(date) =>
+                                                date <= new Date(pickUpDate) || date < new Date()
+                                            }
+                                            captionLayout="dropdown"
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <Button type="submit">Submit</Button>
+                </form>
+            </Form>
         </Card>
-    );
-};
-
-export default BookingCard;
+    )
+}
