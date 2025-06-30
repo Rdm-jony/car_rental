@@ -1,7 +1,6 @@
 import DashboardHeading from "@/components/Heading/DashboardHeading";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,31 +12,54 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { carZodSchema } from "@/Model/car_model";
+import { carZodSchema, type ICar } from "@/Model/car_model";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUp, } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { useAppSelector } from "@/hooks/use-store";
+import { selectUser } from "@/Redux/feature/User/userSlice";
+import { useAddCarMutation } from "@/Redux/baseAPi";
+import { toast } from "sonner";
+import { object } from "zod";
 
 
 
 const AddCar = () => {
+    const user = useAppSelector(selectUser);
+    const [addCar] = useAddCarMutation()
     const [image, setImage] = useState<File | null>(null)
-    const form = useForm<z.infer<typeof carZodSchema>>({
+
+    const form = useForm<ICar>({
         resolver: zodResolver(carZodSchema),
 
     })
 
-    function onSubmit(data: z.infer<typeof carZodSchema>) {
-
-          const formData = new FormData();
-          for(const key in data){
-            const value=data[key as keyof typeof data]
-            formData.append(key,value as string | File)
-          }
-          console.log(formData)
-
+    async function onSubmit(data: ICar) {
+        if (!user?._id) {
+            toast.error("User not found");
+            return;
+        }
+        const formData = new FormData();
+        for (const key in data) {
+            const value = data[key as keyof typeof data];
+            if (value instanceof File) {
+                formData.append(key, value);
+            } else if (typeof value == 'object' && value != null) {
+                formData.append(key, JSON.stringify(value))
+            }
+            else {
+                formData.append(key, String(value));
+            }
+        }
+        formData.append("owner", user?._id);
+        // try {
+        const response = await addCar(formData).unwrap();
+        // } catch (error) {
+        //     console.log(error)
+        // }
     }
+
     return (
         <div>
             <DashboardHeading title="Add New Car" description="Fill in details to list a new car for booking, including pricing, availability, and car specifications" />
@@ -113,13 +135,23 @@ const AddCar = () => {
                             <FormItem>
                                 <FormLabel>Fuel Type</FormLabel>
                                 <FormControl>
-                                    <Input className="placeholder:text-xs" placeholder="Disel" {...field} />
+                                    <select
+                                        {...field}
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm "
+                                    >
+                                        <option value="">Select Fuel Type</option>
+                                        <option value="Petrol">Petrol</option>
+                                        <option value="Diesel">Diesel</option>
+                                        <option value="Electric">Electric</option>
+                                        <option value="Hybrid">Hybrid</option>
+                                    </select>
                                 </FormControl>
-
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
+
+
                     <FormField
                         control={form.control}
                         name="seatingCapacity"

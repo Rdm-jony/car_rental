@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 
-export type IUser= z.infer<typeof signUpSchema> & {role: "owner" | "user" | null, image?: string}
+export type IUser= z.infer<typeof signUpSchema> & {role: "owner" | "user" | null, image?: string,_id:string}
 
 
 export const signUpSchema = z.object({

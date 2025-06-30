@@ -43,15 +43,21 @@ export const baseApi = createApi({
             })
         }),
         addCar: build.mutation<ICar, FormData>({
-            query: (formData) => ({
-                url: "/cars",
+            query: (formData) => (
+                {
+                url: "/car",
                 method: "POST",
                 body: formData,
             }),
+        }),
+        getAllCars:build.query<ICar[],void>({
+            query:()=>({
+                url:'/car/all'
+            })
         })
     }),
 })
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useSignUpMutation,useGetCurrentUserQuery,useSignInMutation } = baseApi
+export const { useSignUpMutation,useGetCurrentUserQuery,useSignInMutation,useGetAllCarsQuery,useAddCarMutation} = baseApi

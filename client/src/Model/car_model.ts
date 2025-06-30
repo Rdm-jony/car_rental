@@ -1,20 +1,7 @@
-export interface ICar {
-  owner: string; // MongoDB ObjectId as string
-  brand: string;
-  category: string;
-  description: string;
-  fuelTypes: string;
-  image: string;
-  model: string;
-  year: string; // Can also be Date if using `new Date()` objects
-  location: string;
-  isAvailable: boolean;
-  pricePerDay: number;
-  seatingCapacity: number;
-  transmission: string;
-}
 
 import { z } from "zod";
+
+export type ICar=z.infer<typeof carZodSchema>
 
 
 // Define allowed fuel types, brands, etc.
@@ -59,7 +46,7 @@ export const carZodSchema = z.object({
     .min(3, "Location must be at least 3 characters")
     .regex(/^[A-Za-z\s,]+$/, "Only letters, spaces, and commas are allowed"),
 
-  // isAvailable: z.boolean().default(true),
+// isAvailable: z.boolean().default(true),
 
   pricePerDay: z.coerce.number()
     .positive("Price must be greater than 0"),
