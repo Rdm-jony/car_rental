@@ -9,6 +9,8 @@ export const bookingSchema = new mongoose.Schema<IBooking>({
     status:{type:String,enum:['confimed','pending'],default:"pending"},
     totalPrice:{type:Number,required:[true,'totalPrice is required']},
 
+},{
+    timestamps:true
 })
 
 export const Booking=model("Booking",bookingSchema)

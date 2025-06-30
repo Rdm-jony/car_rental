@@ -10,9 +10,9 @@ export const carBooking = async (req: Request, res: Response): Promise<any> => {
             return res.status(404).json({ success: false, message: "Invaild email or password" })
 
         }
-        const body=req.body
-        const data=await Booking.create(body)
-        res.status(201).json({success:false,message:"Successfully booked",data})
+        const body = req.body
+        const data = await Booking.create(body)
+        res.status(201).json({ success: false, message: "Successfully booked", data })
     } catch (error: any) {
         console.log(error)
         if (error.code === 11000) {
@@ -44,6 +44,34 @@ export const carBooking = async (req: Request, res: Response): Promise<any> => {
         }
 
         // ⚫ Generic Server Error
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Something went wrong"
+        });
+    }
+}
+
+export const getBookingCar = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const userId = req.user?.id
+        const findUser = await User.findById(userId)
+        if (!findUser) {
+            return res.status(404).json({ success: false, message: "Invaild email or password" })
+
+        }
+        const data = await Booking.find({ user: userId }, {
+            pickUpDate: 1,
+            returnDate: 1,
+            status: 1,
+            totalPrice: 1,
+            createdAt: 1
+        }).populate({
+            path: "car",
+            select: "year brand category image location",
+        });
+        console.log(data)
+        res.json(data)
+    } catch (error: any) {
         return res.status(500).json({
             success: false,
             message: error.message || "Something went wrong"

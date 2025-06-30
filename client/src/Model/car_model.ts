@@ -1,7 +1,7 @@
 
-import {  z } from "zod";
+import { z } from "zod";
 
-export type ICar=z.infer<typeof carZodSchema> & {_id?:string}
+export type ICar = z.infer<typeof carZodSchema> & { _id?: string }
 
 
 // Define allowed fuel types, brands, etc.
@@ -46,7 +46,7 @@ export const carZodSchema = z.object({
     .min(3, "Location must be at least 3 characters")
     .regex(/^[A-Za-z\s,]+$/, "Only letters, spaces, and commas are allowed"),
 
-// isAvailable: z.boolean().default(true),
+  // isAvailable: z.boolean().default(true),
 
   pricePerDay: z.coerce.number()
     .positive("Price must be greater than 0"),
@@ -62,13 +62,13 @@ export const carZodSchema = z.object({
 });
 
 export const BookingSchema = z.object({
-    pickUpDate: z.date({
-        required_error: "Pick up date is required.",
-    }),
-    returnDate: z.date({
-        required_error: "Return date is required.",
-    }),
+  pickUpDate: z.date({
+    required_error: "Pick up date is required.",
+  }),
+  returnDate: z.date({
+    required_error: "Return date is required.",
+  }),
 })
 
-export type IBooking=z.infer<typeof BookingSchema> & {user:string,car:string,totalPrice:number}
+export type IBooking = z.infer<typeof BookingSchema> & { user: string, car: string | Pick<ICar, 'brand' | 'category' | 'location' | 'image' | 'year'>, totalPrice: number, _id?: string ,status?:'confirmed'|'pending',createdAt:Date}
 

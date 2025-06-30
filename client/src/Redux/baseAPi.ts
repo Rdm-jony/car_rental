@@ -64,10 +64,13 @@ export const baseApi = createApi({
                 method:"POST",
                 body:formData
             })
+        }),
+        getBookingCar:build.query<IBooking[],void>({
+            query:()=>'/booking'
         })
     }),
 })
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useSignUpMutation,useGetCurrentUserQuery,useSignInMutation,useGetAllCarsQuery,useAddCarMutation,useGetCarDetailsQuery,useCarBookingMutation} = baseApi
+export const { useSignUpMutation,useGetCurrentUserQuery,useSignInMutation,useGetAllCarsQuery,useAddCarMutation,useGetCarDetailsQuery,useCarBookingMutation,useGetBookingCarQuery} = baseApi
