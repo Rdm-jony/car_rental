@@ -28,6 +28,14 @@ export const baseApi = createApi({
 
             })
         }),
+        signIn: build.mutation<IResponse, Pick<IUser,'email'|'password'>>({
+            query: (formData) => ({
+                url: "/user/login",
+                method: "Post",
+                body: formData
+
+            })
+        }),
         getCurrentUser:build.query<IUser,void>({
             query:()=>({
                 url:'/user',
@@ -46,4 +54,4 @@ export const baseApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useSignUpMutation,useGetCurrentUserQuery } = baseApi
+export const { useSignUpMutation,useGetCurrentUserQuery,useSignInMutation } = baseApi

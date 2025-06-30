@@ -3,19 +3,32 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { z } from "zod";
 import { signInSchema } from "@/Model/SignIn_model";
+import { useSignInMutation, type IErrorResponse } from "@/Redux/baseAPi";
+import type { IUser } from "@/Model/SignUp_model";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
-type SignInFormData = z.infer<typeof signInSchema>
 
 const SignIn = () => {
+    const [signIn] = useSignInMutation()
+    const navigate=useNavigate()
 
-    const form = useForm<SignInFormData>({
+    const form = useForm<Pick<IUser, 'email' | 'password'>>({
         resolver: zodResolver(signInSchema),
     })
-    const onSubmit = (data: SignInFormData) => {
-        console.log(data)
+
+    const onSubmit = async (data: Pick<IUser, 'email' | 'password'>) => {
+        try {
+            const response = await signIn(data).unwrap();
+            toast.success(response.message)
+            navigate("/")
+        } catch (error: unknown) {
+            const err = error as IErrorResponse;
+            toast.error(err.data?.message || 'Something went wrong');
+        }
     }
+
     return (
         <div className="h-screen flex justify-center items-center">
 

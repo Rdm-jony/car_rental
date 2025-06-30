@@ -10,33 +10,29 @@ import MyBooking from "@/pages/MyBooking";
 import Dashboard from "@/pages/Dashboard";
 import SignIn from "@/components/SignIn/SignIn";
 import SignUp from "@/components/SignIUp/SignUp";
-import PrivateRoute from "./PrivateRoute";
+import AuhenticateRoute from "./AuhenticateRoute";
+import AdminPrivateRoute from "./AdminPrivateRoute";
 
 export const router = createBrowserRouter([
   // ✅ Public Routes
-  {
-    path: "/signIn",
-    element: <SignIn />,
-  },
-  {
-    path: "/signUp",
-    element: <SignUp />,
-  },
+
 
   // ✅ Protected Routes (wrapped with PrivateRoute)
   {
     path: "/",
-    element: <PrivateRoute><Main /></PrivateRoute>,
+    element: <Main />,
     children: [
       { index: true, element: <Home /> },
       { path: "cars", element: <Cars /> },
       { path: "car-details", element: <CarDetails /> },
       { path: "my-booking", element: <MyBooking /> },
+      { path: "signIn", element:<AuhenticateRoute> <SignIn /> </AuhenticateRoute>  },
+      { path: "signUp", element:<AuhenticateRoute><SignUp /></AuhenticateRoute>  },
     ],
   },
   {
     path: "/dashboard",
-    element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
+    element: <AdminPrivateRoute><DashboardLayout /></AdminPrivateRoute>,
     children: [
       { index: true, element: <Dashboard /> },
       { path: "addcar", element: <AddCar /> },

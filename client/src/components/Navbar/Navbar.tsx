@@ -5,7 +5,9 @@ import { Search } from "lucide-react";
 import { Button } from "../ui/button";
 import React from "react";
 import { selectUser } from "@/Redux/feature/User/userSlice";
-import {  useAppSelector } from "@/hooks/use-store";
+import { useAppSelector } from "@/hooks/use-store";
+import { Avatar, AvatarImage } from "../ui/avatar";
+import { AvatarFallback } from "@radix-ui/react-avatar";
 
 const Navbar = ({ children }: { children: React.ReactNode }) => {
 
@@ -30,9 +32,16 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
                     <Search className="absolute right-5" size={15} />
                 </div>
                 <Link to="/">List cars</Link>
-                <Button  className="bg-primary">
-                    Sign Up
-                </Button>
+                {
+                    user.email ? <Avatar>
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar> : <Button className="bg-primary">
+                        Sign Up
+                    </Button>
+                }
+
+
 
             </div>
             {/* Controlled Modal */}
