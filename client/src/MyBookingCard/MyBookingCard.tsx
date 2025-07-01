@@ -3,8 +3,9 @@ import { format } from "date-fns";
 import { Calendar, LocateFixed } from "lucide-react";
 
 const MyBookingCard = ({ booking }: { booking: IBooking }) => {
-    const { pickUpDate, returnDate, totalPrice, status,createdAt } = booking
+    const { pickUpDate, returnDate, totalPrice, status,createdAt,pickUpLocation,returnLocation } = booking
     const { brand, category, image, location, year } = booking?.car as Pick<ICar, 'brand' | 'category' | 'location' | 'image' | 'year'>
+    console.log(booking)
     return (
         <div className="border-2 p-5 flex justify-between rounded-xl shadow-lg">
             <div className="w-1/2 flex gap-10">
@@ -32,14 +33,14 @@ const MyBookingCard = ({ booking }: { booking: IBooking }) => {
                         <LocateFixed size={20} />
                         <div>
                             <p>Pick-up Location</p>
-                            <p className="text-black font-medium">Airport Terminal 1</p>
+                            <p className="text-black font-medium">{pickUpLocation}</p>
                         </div>
                     </div>
                     <div className="text-muted-foreground flex gap-2 items-start">
                         <Calendar size={20} />
                         <div>
                             <p>Return Location</p>
-                            <p className="text-black font-medium">Downtown Office</p>
+                            <p className="text-black font-medium">{returnLocation}</p>
                         </div>
                     </div>
                 </div>
@@ -47,7 +48,7 @@ const MyBookingCard = ({ booking }: { booking: IBooking }) => {
             <div className="text-muted-foreground">
                 <p>Total price</p>
                 <p className="text-2xl font-semibold text-primary">${totalPrice}</p>
-                <p>Booked on {format(new Date(createdAt), "dd/MM/yyyy")}</p>
+                <p>Booked on {format(new Date(createdAt!), "dd/MM/yyyy")}</p>
             </div>
         </div>
     );

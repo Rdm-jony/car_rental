@@ -25,7 +25,7 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
                 <div className="space-x-10">
                     <Link to="/">Home</Link>
                     <Link to="/cars">Cars</Link>
-                    <Link to="/">My Bookings</Link>
+                    <Link to="/my-booking">My Bookings</Link>
                 </div>
                 <div className="flex w-full max-w-xs items-center gap-2 relative">
                     <Input type="email" placeholder="Search car" className="rounded-full" />

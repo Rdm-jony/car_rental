@@ -5,7 +5,7 @@ import type { ICar } from '@/Model/car_model';
 const CarInfo = ({car}:{car:ICar}) => {
     return (
         <div className='space-y-5'>
-            <img className="w-full object-cover h-[400px] rounded-2xl" src={car.image instanceof File ? URL.createObjectURL(car.image) : car.image} alt="" />
+            <img className="w-full object-cover h-[400px] rounded-2xl" src={car?.image instanceof File ? URL.createObjectURL(car.image) : car?.image} alt="" />
             <div>
                 <h2 className="text-3xl font-bold">{car.brand}</h2>
                 <p className="text-xl text-muted-foreground font-semibold">{car.category} • {car.year.toString().slice(0,4)}</p>

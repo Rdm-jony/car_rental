@@ -26,22 +26,27 @@ import { BookingSchema, type IBooking, type ICar } from "@/Model/car_model"
 import { useEffect } from "react"
 import { resetPrice, selectTotalPrice, setPickUpDate, setPricePerDay, setReturnDate } from "@/Redux/feature/Booking/bookingSlice"
 import { useAppDispatch, useAppSelector } from "@/hooks/use-store"
-import { useCarBookingMutation, type IErrorResponse } from "@/Redux/baseAPi"
+import { useCarBookingMutation, useGetExistingBookingDateQuery, type IErrorResponse } from "@/Redux/baseAPi"
 import { selectUser } from "@/Redux/feature/User/userSlice"
 import { toast } from "sonner"
+import { Input } from "../ui/input"
+import { disablePickUpDate, disableReturnDate } from "@/utils/bookingDateUtils"
 
 
 
 export function BookingCard({ car }: { car: ICar }) {
+    const { data: existingDates } = useGetExistingBookingDateQuery(car?._id)
     const [carBooking] = useCarBookingMutation()
     const dispatch = useAppDispatch()
     const user = useAppSelector(selectUser)
     const totalPrice = useAppSelector(selectTotalPrice)
-    const form = useForm<Pick<IBooking, 'pickUpDate' | 'returnDate'>>({
+    const form = useForm<Pick<IBooking, 'pickUpDate' | 'returnDate' | 'pickUpLocation' | 'returnLocation'>>({
         resolver: zodResolver(BookingSchema),
-        defaultValues:{
-            pickUpDate:undefined,
-            returnDate:undefined
+        defaultValues: {
+            pickUpDate: undefined,
+            returnDate: undefined,
+            pickUpLocation: '',
+            returnLocation: ''
         }
     })
     const pickUpDate = form.watch("pickUpDate");
@@ -56,9 +61,9 @@ export function BookingCard({ car }: { car: ICar }) {
     }, [dispatch, pickUpDate, returnDate, car.pricePerDay])
 
 
-    async function onSubmit(data: Pick<IBooking, 'pickUpDate' | 'returnDate'>) {
+    async function onSubmit(data: Pick<IBooking, 'pickUpDate' | 'returnDate' | 'pickUpLocation' | 'returnLocation'>) {
         try {
-            const bookingData: IBooking = {
+            const bookingData = {
                 ...data,
                 user: user?._id ?? "",
                 car: car?._id ?? "",
@@ -112,10 +117,9 @@ export function BookingCard({ car }: { car: ICar }) {
                                             mode="single"
                                             selected={field.value}
                                             onSelect={field.onChange}
-                                            disabled={(date) =>
-                                                date < new Date() || date >= new Date(returnDate)
-                                            }
-                                            captionLayout="dropdown"
+                                            disabled={(date) =>disablePickUpDate(date,existingDates??[])}
+
+                                        captionLayout="dropdown"
                                         />
                                     </PopoverContent>
                                 </Popover>
@@ -153,13 +157,39 @@ export function BookingCard({ car }: { car: ICar }) {
                                             mode="single"
                                             selected={field.value}
                                             onSelect={field.onChange}
-                                            disabled={(date) =>
-                                                date <= new Date(pickUpDate) || date < new Date()
-                                            }
+                                            disabled={(date) =>disableReturnDate(pickUpDate,date,existingDates??[])}
                                             captionLayout="dropdown"
                                         />
                                     </PopoverContent>
                                 </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="pickUpLocation"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Pick Up Loaction</FormLabel>
+                                <FormControl>
+                                    <Input className="placeholder:text-xs" placeholder="e.g. BMW, Mercedes, Audi..." {...field} />
+                                </FormControl>
+
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="returnLocation"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Return Loaction</FormLabel>
+                                <FormControl>
+                                    <Input className="placeholder:text-xs" placeholder="e.g. BMW, Mercedes, Audi..." {...field} />
+                                </FormControl>
+
                                 <FormMessage />
                             </FormItem>
                         )}

@@ -7,4 +7,6 @@ export interface IBooking{
     returnDate:Date,
     totalPrice:number,
     status:'confimed'|'pending',
+    pickUpLocation:string,
+    returnLocation:string
 }

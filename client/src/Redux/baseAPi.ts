@@ -67,10 +67,13 @@ export const baseApi = createApi({
         }),
         getBookingCar:build.query<IBooking[],void>({
             query:()=>'/booking'
+        }),
+        getExistingBookingDate:build.query<Pick<IBooking,'pickUpDate'|'returnDate'>[],string | undefined>({
+            query:(carId)=>`/booking/existingDate/${carId}`
         })
     }),
 })
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useSignUpMutation,useGetCurrentUserQuery,useSignInMutation,useGetAllCarsQuery,useAddCarMutation,useGetCarDetailsQuery,useCarBookingMutation,useGetBookingCarQuery} = baseApi
+export const { useSignUpMutation,useGetCurrentUserQuery,useSignInMutation,useGetAllCarsQuery,useAddCarMutation,useGetCarDetailsQuery,useCarBookingMutation,useGetBookingCarQuery,useGetExistingBookingDateQuery} = baseApi

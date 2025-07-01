@@ -64,17 +64,29 @@ export const getBookingCar = async (req: Request, res: Response): Promise<any> =
             returnDate: 1,
             status: 1,
             totalPrice: 1,
-            createdAt: 1
+            createdAt: 1,
+            pickUpLocation:1,
+            returnLocation:1
         }).populate({
             path: "car",
             select: "year brand category image location",
         });
-        console.log(data)
         res.json(data)
     } catch (error: any) {
         return res.status(500).json({
             success: false,
             message: error.message || "Something went wrong"
         });
+    }
+}
+
+export const getExistingBookingDate=async(req:Request,res:Response):Promise<any>=>{
+    try {
+        const carId=req.params.carId
+        console.log(carId)
+        const data=await Booking.find({car:carId},{pickUpDate:1,returnDate:1,_id:0})
+        res.json(data)
+    } catch (error) {
+        
     }
 }

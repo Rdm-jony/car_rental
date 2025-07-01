@@ -68,7 +68,13 @@ export const BookingSchema = z.object({
   returnDate: z.date({
     required_error: "Return date is required.",
   }),
+  pickUpLocation: z.string({
+    required_error: "Pick Location is required"
+  }),
+  returnLocation:z.string({
+    required_error:"Return Location is required"
+  })
 })
 
-export type IBooking = z.infer<typeof BookingSchema> & { user: string, car: string | Pick<ICar, 'brand' | 'category' | 'location' | 'image' | 'year'>, totalPrice: number, _id?: string ,status?:'confirmed'|'pending',createdAt:Date}
+export type IBooking = z.infer<typeof BookingSchema> & { user: string, car: string | Pick<ICar, 'brand' | 'category' | 'location' | 'image' | 'year'>, totalPrice: number, _id?: string, status?: 'confirmed' | 'pending', createdAt?: Date }
 
